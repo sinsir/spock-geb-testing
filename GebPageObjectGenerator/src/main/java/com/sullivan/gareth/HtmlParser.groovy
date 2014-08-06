@@ -1,7 +1,7 @@
 package com.sullivan.gareth
+
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 
 /**
  * Parses a HTML file and allows retrieval of 
@@ -17,10 +17,10 @@ import org.jsoup.select.Elements
 class HtmlParser {
 
     /** Permitted HTML suffix */
-    def static HTML_SUFFIX = "html";
+    static final HTML_SUFFIX = 'html'
     
     /** Permitted HTM suffix */
-    def static HTM_SUFFIX = "htm";
+    static final HTM_SUFFIX = 'htm'
      
     /**
      * Returns the String representation of a HTML/HTM file
@@ -30,7 +30,7 @@ class HtmlParser {
     String getFileContent(path)
     {
         def fileContent
-        if (path !=null && path != ""  && isValidSuffix(path))
+        if (path != null && path != ''  && isValidSuffix(path))
         {
             fileContent = new File(path).text
         }
@@ -44,7 +44,7 @@ class HtmlParser {
      */
     boolean isValidSuffix(suffix)
     {
-        return suffix.toLowerCase().endsWith(HTML_SUFFIX) || suffix.toLowerCase().endsWith(HTM_SUFFIX)
+        suffix.toLowerCase().endsWith(HTML_SUFFIX) || suffix.toLowerCase().endsWith(HTM_SUFFIX)
     }
     
     /**
@@ -58,11 +58,10 @@ class HtmlParser {
         Document doc
         if (htmlString != null)
         {
-            doc = Jsoup.parse(htmlString);
+            doc = Jsoup.parse(htmlString)
             //alternatively we could use jsoup to parse straight from a file
             //doc = Jsoup.parse(new File(htmlString), "UTF-8", "http://example.com/")
         }
-        return doc
     }
     
     /**
@@ -72,11 +71,9 @@ class HtmlParser {
      */
     List getInputFieldsIterator(doc)
     {
-        def inputFields = doc.select("input").toList()
+        def inputFields = doc.select('input').toList()
         def inputFieldsAsStrings = []
-        inputFields.each{inputFieldsAsStrings.add(it.id())}
-        
-        return inputFieldsAsStrings 
+        inputFields.each { inputFieldsAsStrings.add(it.id()) }
     }
     
     /**
@@ -86,6 +83,6 @@ class HtmlParser {
      */
     String getTitle(doc)
     {
-        return doc.title()
+        doc.title()
     }
 }
