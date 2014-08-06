@@ -24,6 +24,9 @@ public class HtmlParserTest {
     private static final String myNameId = "myName";
     
     private static final String myAgeId = "myAge";
+    
+    private Document doc;
+    
     static
     {
         inputFieldsIdList.add(myNameId);
@@ -35,6 +38,7 @@ public class HtmlParserTest {
     {
         classToTest = new HtmlParser();
         assertNotNull(classToTest);
+        doc = (Document) classToTest.parse(TEST_HTML_FILE_LOCATION);
     }
     
     @Test
@@ -51,9 +55,8 @@ public class HtmlParserTest {
     @Test
     public void testParse()
     {
-        assertNull(classToTest.parse(null));
-        Document doc = (Document) classToTest.parse(HtmlContent.EXAMPLE_FORM);
         assertNotNull(doc);
+        assertNull(classToTest.parse(null));
         //This will test groovy implementation where jsoup parses directly from a file
         //Document doc = (Document) classToTest.parse(TEST_HTML_FILE_LOCATION);
         //System.out.println("Doc "+doc);
@@ -62,8 +65,7 @@ public class HtmlParserTest {
     @Test
     public void testGetInputFieldsIterator()
     {
-        Document doc = (Document) classToTest.parse(HtmlContent.EXAMPLE_FORM);
-        List<String> inputFields = classToTest.getInputFieldsIterator(doc);
+        List<String> inputFields = classToTest.getInputFieldsIterator();
         assertNotNull(inputFields);
         assertEquals(2, inputFields.size());
         assertTrue(inputFields.containsAll(inputFieldsIdList));
@@ -72,7 +74,6 @@ public class HtmlParserTest {
     @Test
     public void testGetTitle()
     {
-        Document doc = (Document) classToTest.parse(HtmlContent.EXAMPLE_FORM);
-        assertEquals(HtmlContent.TITLE,classToTest.getTitle(doc));
+        assertEquals(HtmlContent.TITLE,classToTest.getTitle());
     }
 }

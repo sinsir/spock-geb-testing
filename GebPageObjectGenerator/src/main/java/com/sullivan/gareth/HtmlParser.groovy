@@ -21,7 +21,11 @@ class HtmlParser {
     
     /** Permitted HTM suffix */
     static final HTM_SUFFIX = 'htm'
+    
+    def filePath
      
+    def doc
+    
     /**
      * Returns the String representation of a HTML/HTM file
      * @param path the path of the file to load
@@ -52,9 +56,9 @@ class HtmlParser {
      * @param htmlString String representation of a HTML document
      * @return JSoup Document representation of the HTML doc
      */
-    Document parse(htmlString)
+    Document parse(path)
     {
-        Document doc
+        def htmlString = getFileContent(path)
         if (htmlString != null)
         {
             doc = Jsoup.parse(htmlString)
@@ -68,12 +72,14 @@ class HtmlParser {
      * @param doc JSoup Document representation of the HTML doc
      * @return List of strings - ids of all input elements
      */
-    List getInputFieldsIterator(doc)
+    List getInputFieldsIterator()
     {
-        def inputFields = doc.select('input').toList()
-        def inputFieldsAsStrings = []
-        inputFields.each { inputFieldsAsStrings.add(it.id()) }
-        return inputFieldsAsStrings
+//        def inputFields = doc.select('input').toList()
+//        def inputFieldsAsStrings = []
+//        inputFields.each { inputFieldsAsStrings.add(it.id()) }
+//        return inputFieldsAsStrings
+        
+        convertElementsToList(doc.select('input').toList())
     }
     
     /**
@@ -81,8 +87,20 @@ class HtmlParser {
      * @param doc JSoup Document representation of the HTML doc
      * @return title of the HTML doc
      */
-    String getTitle(doc)
+    String getTitle()
     {
         doc.title()
+    }
+    
+    List getSubmitButtonIds()
+    {
+        convertElementsToList(doc.select('button[type=submit]').toList())
+    }
+    
+    private List convertElementsToList(elementList)
+    {
+        def stringList = []
+        elementList.each { stringList.add(it.id()) }
+        return stringList
     }
 }

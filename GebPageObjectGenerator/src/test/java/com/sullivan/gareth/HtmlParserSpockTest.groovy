@@ -23,16 +23,16 @@ class HtmlParserSpockTest extends Specification {
     def "html is parsed succesfully"()
     {
         expect:
-            htmlParser.parse(HtmlContent.EXAMPLE_FORM) != null
+            htmlParser.parse(TEST_HTML_FILE_LOCATION) != null
             htmlParser.parse(null) == null
     }
     
     def "input elements are returned succesfully"()
     {
         when:
-            def doc = htmlParser.parse(HtmlContent.EXAMPLE_FORM)
+            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
         then:
-            def inputFieldsList = htmlParser.getInputFieldsIterator(doc)
+            def inputFieldsList = htmlParser.getInputFieldsIterator()
         expect:
             inputFieldsList.size == 2
             inputFieldsList == ['myName', 'myAge']  
@@ -41,10 +41,22 @@ class HtmlParserSpockTest extends Specification {
     def "parser returns html document title"()
     {
         setup:
-            def doc = htmlParser.parse(HtmlContent.EXAMPLE_FORM)
+            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
         when:
-            def title = htmlParser.getTitle(doc)
+            def title = htmlParser.getTitle()
         then:
             title == HtmlContent.TITLE
     }
+    
+    def "parser returns submit button id"()
+    {
+        when:
+            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
+        then:
+            def idList = htmlParser.getSubmitButtonIds()
+        expect:
+            idList != null
+            idList.size == 1
+            idList[0] == 'mySubmitButton'
+     }
 }
