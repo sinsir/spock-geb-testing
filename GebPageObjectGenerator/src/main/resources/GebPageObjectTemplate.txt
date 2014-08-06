@@ -1,0 +1,16 @@
+package package.com
+
+import geb.Page
+
+class $htmlPageName extends Page
+{
+
+    static url = "$url"
+    static at = { title == "$title" }
+    static content = 
+    {
+        <% for(i = 0; i< mylist.size(); i++){println mylist[i] + ' { $(\"input[id=' + mylist[i] + ']\") }' } %>
+    }
+
+
+}
