@@ -5,9 +5,9 @@ public interface HtmlContent {
     String TITLE = "Name And Age Submission Form";
     
     String EXAMPLE_FORM = "<html>" + "\r\n"
-            +"  <head>" + "\r\n"
-            +"      <title>"+TITLE+"</title>" + "\r\n"
-            +"  </head>" + "\r\n"
+            +"    <head>" + "\r\n"
+            +"        <title>"+TITLE+"</title>" + "\r\n"
+            +"    </head>" + "\r\n"
             +"    <body>" + "\r\n"
             +"        <form action=\"#\" th:action=\"@{/}\" th:object=\"${person}\" method=\"post\" id=\"signupForm\">" + "\r\n"
             +"            <table>" + "\r\n"
