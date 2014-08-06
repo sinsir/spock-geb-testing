@@ -34,7 +34,6 @@ class HtmlParser {
         {
             fileContent = new File(path).text
         }
-        return fileContent
     }
     
     /**
@@ -42,7 +41,7 @@ class HtmlParser {
      * @param suffix
      * @return
      */
-    boolean isValidSuffix(suffix)
+    private boolean isValidSuffix(suffix)
     {
         suffix.toLowerCase().endsWith(HTML_SUFFIX) || suffix.toLowerCase().endsWith(HTM_SUFFIX)
     }
@@ -74,6 +73,7 @@ class HtmlParser {
         def inputFields = doc.select('input').toList()
         def inputFieldsAsStrings = []
         inputFields.each { inputFieldsAsStrings.add(it.id()) }
+        return inputFieldsAsStrings
     }
     
     /**
