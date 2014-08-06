@@ -40,11 +40,11 @@ class HtmlParserSpockTest extends Specification {
     
     def "parser returns html document title"()
     {
-        when:
+        setup:
             def doc = htmlParser.parse(HtmlContent.EXAMPLE_FORM)
-        then:
+        when:
             def title = htmlParser.getTitle(doc)
-        expect:
+        then:
             title == HtmlContent.TITLE
     }
 }
