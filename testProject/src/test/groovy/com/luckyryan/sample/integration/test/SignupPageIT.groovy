@@ -30,7 +30,7 @@ class SignupPageIT extends GebReportingSpec {
 
         when: "I signup with an invalid age (<18)"
         nameField = "firstname"
-        ageField = "19"
+        ageField = "17"
         submitButton.click(SubmitPage)
 
         then: "I'm at the sign up page again "
