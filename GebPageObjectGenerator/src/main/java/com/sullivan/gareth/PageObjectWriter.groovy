@@ -4,7 +4,9 @@ import groovy.text.SimpleTemplateEngine
 
 class PageObjectWriter {
     
-    static final templateText = new File('src' + File.separator + 'main' + File.separator + 'resources' + File.separator + 'GebPageObjectTemplate.txt').text
+    InputStream is = getClass().getResourceAsStream('/GebPageObjectTemplate.txt')
+    
+    File templateText = new File(is.getText())
     
     def htmlFilePath
     
@@ -35,11 +37,30 @@ class PageObjectWriter {
     String populateTemplate()
     {
         def engine = new SimpleTemplateEngine()
-        engine.createTemplate(templateText).make(getSubstitutionBinding())
+        engine.createTemplate(templateText.toString()).make(getSubstitutionBinding())
     }
     
     void writeGebFile(path)
     {
         File file = new File(path).write(populateTemplate())
+    }
+    
+    static boolean isArgsValid(args)
+    {
+        if (args.size() != 2)
+        {
+            println "Usage: java -jar GebPageObjectGenerator-x.x.x.jar htmlFilePath outputPath"
+            return false
+        }
+        return true
+    }
+    
+    static void main(String[] args)
+    {
+        if (args != null && PageObjectWriter.isArgsValid(args))
+        {
+            PageObjectWriter writer = new PageObjectWriter(htmlFilePath:args[0])
+            writer.writeGebFile(args[1])
+        }
     }
 }
