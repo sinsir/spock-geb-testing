@@ -5,7 +5,7 @@ import spock.lang.Specification
 class HtmlParserSpockTest extends Specification {
     private static final TEST_HTML_FILE_LOCATION = 'src//test//resources//example.html'
     
-    def htmlParser = new HtmlParser()
+    HtmlParser htmlParser = new HtmlParser()
     
     def "valid file content is stored as a String"()
     {
@@ -27,18 +27,27 @@ class HtmlParserSpockTest extends Specification {
             htmlParser.parse(null) == null
     }
     
-    def "input elements are returned succesfully"()
+    def "accessing document elements before it has been parsed returns null"()
     {
-        when:
-            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
-        then:
-            def inputFieldsList = htmlParser.getInputFieldsIterator()
         expect:
+            htmlParser.inputFieldsIterator == null
+            htmlParser.submitButtonIds == null
+            htmlParser.title == null
+            htmlParser.url == null
+    }
+    
+    def "input elements are returned succesfully, after parsing document"()
+    {
+        setup:
+            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
+        when:
+            def inputFieldsList = htmlParser.getInputFieldsIterator()
+        then:
             inputFieldsList.size == 2
             inputFieldsList == ['myName', 'myAge']  
     }
     
-    def "parser returns html document title"()
+    def "parser returns html document title, after parsing document"()
     {
         setup:
             def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
@@ -48,15 +57,28 @@ class HtmlParserSpockTest extends Specification {
             title == HtmlContent.TITLE
     }
     
-    def "parser returns submit button id"()
+    def "parser returns submit button id, after parsing document"()
     {
-        when:
+        setup:
             def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
-        then:
+        when:
             def idList = htmlParser.getSubmitButtonIds()
-        expect:
+        then:
             idList != null
             idList.size == 1
             idList[0] == 'mySubmitButton'
      }
+    
+    def "parser returns html document url, after parsing document"()
+    {
+        setup:
+            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
+        when:
+            def url = htmlParser.getUrl()
+            println url
+        then:
+            url != null
+            url != ""
+            
+    }
 }

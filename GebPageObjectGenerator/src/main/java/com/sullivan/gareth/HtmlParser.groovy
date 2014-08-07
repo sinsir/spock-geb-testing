@@ -22,9 +22,9 @@ class HtmlParser {
     /** Permitted HTM suffix */
     static final HTM_SUFFIX = 'htm'
     
-    def filePath
+    private def filePath
      
-    def doc
+    private def doc
     
     /**
      * Returns the String representation of a HTML/HTM file
@@ -43,7 +43,7 @@ class HtmlParser {
     /**
      * Returns true if suffix is HTML or HTM (case insensitive), false otherwise
      * @param suffix
-     * @return
+     * @return true if suffix is HTML or HTM (case insensitive), false otherwise
      */
     private boolean isValidSuffix(suffix)
     {
@@ -53,50 +53,87 @@ class HtmlParser {
     /**
      * Given a String containing HTML markup, returns a JSoup (see http://jsoup.org/) Document
      * 
-     * @param htmlString String representation of a HTML document
+     * @param path String representation of a HTML document
      * @return JSoup Document representation of the HTML doc
      */
     Document parse(path)
     {
+        filePath = path
         def htmlString = getFileContent(path)
         if (htmlString != null)
         {
-            doc = Jsoup.parse(htmlString)
+            doc = Jsoup.parse(htmlString, filePath)
             //alternatively we could use jsoup to parse straight from a file
             //doc = Jsoup.parse(new File(htmlString), "UTF-8", "http://example.com/")
         }
     }
     
     /**
-     * Returns a list of the ids of all input elements found in the supplied Document object
-     * @param doc JSoup Document representation of the HTML doc
+     * Returns a list of the ids of all input elements
      * @return List of strings - ids of all input elements
      */
     List getInputFieldsIterator()
     {
-//        def inputFields = doc.select('input').toList()
-//        def inputFieldsAsStrings = []
-//        inputFields.each { inputFieldsAsStrings.add(it.id()) }
-//        return inputFieldsAsStrings
-        
-        convertElementsToList(doc.select('input').toList())
+        if (doc != null)
+        {
+            convertElementsToList(doc.select('input').toList())
+        }
     }
     
     /**
      * Returns the title of the HTML document
-     * @param doc JSoup Document representation of the HTML doc
      * @return title of the HTML doc
      */
     String getTitle()
     {
-        doc.title()
+        if (doc != null)
+        {
+            doc.title()
+        }
     }
     
+    /**
+     * Returns the URL this HTML document was parsed from
+     * @return url the HTML doc
+     */
+    String getUrl()
+    {
+        if (doc!=null)
+        {
+            doc.location()
+        }
+    }
+    
+    /**
+     * Returns a list of the ids of all button elements with type=submit
+     * @return List of strings - ids of all input elements
+     */
     List getSubmitButtonIds()
     {
-        convertElementsToList(doc.select('button[type=submit]').toList())
+        if (doc!=null)
+        {
+            convertElementsToList(doc.select('button[type=submit]').toList())
+        }
     }
     
+    String getPageName()
+    {
+        if (doc!=null)
+        {
+            new File(filePath).name.tokenize('.').first().capitalize()
+        }
+    }
+    
+    String getPackageName()
+    {
+        if (doc!=null)
+        {
+            def packageList = new File(filePath).path.tokenize('\\')
+            
+            return packageList.take(packageList.size() -1).join('.')
+        }
+    }
+   
     private List convertElementsToList(elementList)
     {
         def stringList = []

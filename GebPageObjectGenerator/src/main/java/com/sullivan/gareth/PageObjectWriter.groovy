@@ -1,32 +1,45 @@
 package com.sullivan.gareth
 
+import groovy.text.SimpleTemplateEngine
+
 class PageObjectWriter {
     
-    static final templateText = new File('src\\main\\resources\\GebPageObjectTemplate.txt').text
+    static final templateText = new File('src' + File.separator + 'main' + File.separator + 'resources' + File.separator + 'GebPageObjectTemplate.txt').text
     
     def htmlFilePath
     
-    Map getBinding()
+    /**
+     * Creates and returns a Map of key/value pairs
+     * 
+     * Keys are the tokens in a substitution file, values are inserted into these tokens 
+     * at substitution time
+     * 
+     * @return Map of String key value/pairs
+     */
+    Map getSubstitutionBinding()
     {
         def htmlParser = new HtmlParser()
         htmlParser.parse(htmlFilePath)
-        def binding = [htmlPageName: new File(htmlFilePath).name.tokenize('.').first().capitalize(),
-                       url:"testUrl",
-                       title : htmlParser.title,
-                       mylist : htmlParser.inputFieldsIterator  ]
+        [packageString: htmlParser.packageName,
+                       htmlPageName: htmlParser.pageName,
+                       url: htmlParser.url,
+                       title: htmlParser.title,
+                       inputFields: htmlParser.inputFieldsIterator,
+                       submitButton: htmlParser.submitButtonIds ]
     }
     
+    /**
+     * Creates the template engine using a template page object text file, and substitutes tags with values.
+     * @return String representation of the document
+     */
     String populateTemplate()
     {
-        def engine = new groovy.text.SimpleTemplateEngine()
-        
-        def template = engine.createTemplate(templateText).make(getBinding())
+        def engine = new SimpleTemplateEngine()
+        engine.createTemplate(templateText).make(getSubstitutionBinding())
     }
     
-    static void main(String[] args)
+    void writeGebFile(path)
     {
-        def pow = new PageObjectWriter(htmlFilePath:"src//test//resources//example.html")
-        println "Populated template is " + pow.populateTemplate()
+        File file = new File(path).write(populateTemplate())
     }
-
 }
