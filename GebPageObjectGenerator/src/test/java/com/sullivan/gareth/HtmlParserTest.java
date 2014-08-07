@@ -12,7 +12,11 @@ import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 
-
+/**
+ * This class now superseded by the spock equivalent test class @see HtmlParserSpockTest.groovy
+ * @author GSULLIVA
+ *
+ */
 public class HtmlParserTest {
 
     private static final String TEST_HTML_FILE_LOCATION = "src//test//resources//example.html";
