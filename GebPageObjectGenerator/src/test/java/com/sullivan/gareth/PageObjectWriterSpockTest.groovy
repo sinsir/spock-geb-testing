@@ -15,7 +15,7 @@ class PageObjectWriterSpockTest extends Specification {
     def 'binding returns valid values'()
     {
         when: 'we create a binding'
-            def bindings = pow.substitutionBinding
+            def bindings = pow.getSubstitutionBinding(testFileLocation)
         then: 'check that it contains what we expect'
             bindings != null
             bindings.size() == 7
@@ -28,12 +28,12 @@ class PageObjectWriterSpockTest extends Specification {
     def "template is populated with values from binding"()
     {
         when: 'we populate the template file'
-            String template = pow.populateTemplate()
+            List template = pow.populateTemplate()
         then: 'check that it has substituted all tokens with the expected values specified in the binding'
             template != null
             // check that the populated template contains all the string valued from the binding
             // created by parsing the HTML
-            pow.substitutionBinding.values().asList().each { item -> template.contains(item.toString()) }
+            pow.getSubstitutionBinding(testFileLocation).values().asList().each { item -> template.contains(item.toString()) }
     }
     
     def "file is written to disk"()

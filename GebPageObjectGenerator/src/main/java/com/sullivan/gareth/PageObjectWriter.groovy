@@ -13,6 +13,7 @@ class PageObjectWriter {
     def gebFileName
     
     final def htmlParser = new HtmlParser()
+    
     /**
      * Creates and returns a Map of key/value pairs
      * 
@@ -21,9 +22,10 @@ class PageObjectWriter {
      * 
      * @return Map of String key value/pairs
      */
-    Map getSubstitutionBinding()
+    Map getSubstitutionBinding(String fileName)
     {
-        htmlParser.parse(htmlFilePath)
+        println 'getSubstitutionBinding fileName ' + fileName
+        htmlParser.parse(fileName)
         gebFileName = htmlParser.pageName
         [packageString: htmlParser.packageName,
                        htmlPageName: htmlParser.pageName,
@@ -34,14 +36,49 @@ class PageObjectWriter {
                        submitButton: htmlParser.submitButtonIds ]
     }
     
+    
+    
     /**
      * Creates the template engine using a template page object text file, and substitutes tags with values.
      * @return String representation of the document
      */
-    String populateTemplate()
+    List populateTemplate()
     {
-        def engine = new SimpleTemplateEngine()
-        engine.createTemplate(templateText.toString()).make(getSubstitutionBinding())
+        def engine = new SimpleTemplateEngine().createTemplate(templateText.toString())
+        List populatedTemplateList = []
+        if (isProcessingDir())
+        {
+            println "processing a dir"
+            def fileList = getFileNamesFromDirectory()
+            println "fileList " + fileList
+            //fileList.each { file-> println file.getAbsolutePath() }
+            fileList.each { file-> populatedTemplateList.add(engine.make(getSubstitutionBinding(file.getAbsolutePath()))) }
+            
+            
+        }
+        else
+        {
+            populatedTemplateList[0] = engine.make(getSubstitutionBinding(htmlFilePath))
+        }
+        
+        println "populatedTemplateList " + populatedTemplateList
+        return populatedTemplateList
+        //engine.createTemplate(templateText.toString()).make(getSubstitutionBinding())
+    }
+    
+    private final class HtmlFileFilter implements FilenameFilter {
+            boolean accept(File f, String filename) {
+                 filename.toLowerCase().endsWith(".htm") || filename.toLowerCase().endsWith(".html")
+            }
+        }
+    
+    private def getFileNamesFromDirectory()
+    {
+        
+        new File(htmlFilePath).listFiles(new HtmlFileFilter())
+        
+        
+//        new File(htmlFilePath).list(new HtmlFileFilter())
     }
     
     void writeGebFile()
@@ -49,7 +86,7 @@ class PageObjectWriter {
         def populatedTemplate = populateTemplate()
         makeGebDirectory()
         def gebFilePath = "geb" + File.separator + gebFileName + ".groovy"
-        File file = new File(gebFilePath).write(populatedTemplate)
+        populatedTemplate.each { template -> new File(gebFilePath).write(template.toString()) }
     }
     
     private makeGebDirectory()
@@ -61,6 +98,11 @@ class PageObjectWriter {
         }
     }
     
+    private boolean isProcessingDir()
+    {
+        new File(htmlFilePath).isDirectory()
+    }
+
     static boolean isArgsValid(args)
     {
         if (args.size() != 1)
