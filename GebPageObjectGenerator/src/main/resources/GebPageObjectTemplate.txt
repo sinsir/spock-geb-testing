@@ -8,6 +8,6 @@ class $htmlPageName extends Page
     static at = { title == "$title" }
     static content = 
     {
-<% for(i = 0; i< inputFields.size(); i++){println '\t' + inputFields[i] + ' { $(\"input[id=' + inputFields[i] + ']\") }' } %><% for(i = 0; i< submitButton.size(); i++){print '\t' + submitButton[i] + '(to:) { $(\"button[id=' + submitButton[i] + ']\") }' } %>
+<% for(i = 0; i< inputFields.size(); i++){println '\t' + inputFields[i] + ' { $(\"input[id=' + inputFields[i] + ']\") }' } %><% for(i = 0; i< submitButton.size(); i++){print '\t' + submitButton[i] + '(to:' + formAction + ') { $(\"button[id=' + submitButton[i] + ']\") }' } %>
     }
 }

@@ -18,11 +18,11 @@ class PageObjectWriterSpockTest extends Specification {
             def bindings = pow.substitutionBinding
         then: 'check that it contains what we expect'
             bindings != null
-            bindings.size() == 6
+            bindings.size() == 7
             bindings.keySet().asList() == 
-                ['packageString', 'htmlPageName', 'url', 'title', 'inputFields', 'submitButton']
+                ['packageString', 'htmlPageName', 'url', 'title', 'formAction', 'inputFields', 'submitButton']
             bindings.values().asList() == 
-                ['src.test.resources', 'Example', testFileLocation, 'Name And Age Submission Form', ['myName', 'myAge'], ['mySubmitButton']]
+                ['src.test.resources', 'Example', testFileLocation, 'Name And Age Submission Form', '#', ['myName', 'myAge'], ['mySubmitButton']]
     }
     
     def "template is populated with values from binding"()
@@ -39,9 +39,9 @@ class PageObjectWriterSpockTest extends Specification {
     def "file is written to disk"()
     {
         when: 'we save the template to a file'
-            pow.writeGebFile(testFileOutputLocation)
+            pow.writeGebFile()
         then: 'check that the file exists'
-            def file = new File(testFileOutputLocation)
+            def file = new File('geb' + File.separator + 'Example.groovy')
             file.exists()
             // need to check that the file contains substituted values
     }   

@@ -76,7 +76,7 @@ class HtmlParser {
     {
         if (doc != null)
         {
-            convertElementsToList(doc.select('input').toList())
+            convertElementsToIdList(doc.select('input').toList())
         }
     }
     
@@ -112,7 +112,7 @@ class HtmlParser {
     {
         if (doc!=null)
         {
-            convertElementsToList(doc.select('button[type=submit]').toList())
+            convertElementsToIdList(doc.select('button[type=submit]').toList())
         }
     }
     
@@ -130,11 +130,20 @@ class HtmlParser {
         {
             def packageList = new File(filePath).path.tokenize('\\')
             
-            return packageList.take(packageList.size() -1).join('.')
+            packageList.take(packageList.size() -1).join('.')
+        }
+    }
+    
+    String getFormAction()
+    {
+        if (doc!=null)
+        {
+            def action = doc.select('form').first()
+            action.attr('action')
         }
     }
    
-    private List convertElementsToList(elementList)
+    private List convertElementsToIdList(elementList)
     {
         def stringList = []
         elementList.each { stringList.add(it.id()) }

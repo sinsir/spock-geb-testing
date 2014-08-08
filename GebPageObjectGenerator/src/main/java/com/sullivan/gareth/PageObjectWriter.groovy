@@ -10,6 +10,9 @@ class PageObjectWriter {
     
     def htmlFilePath
     
+    def gebFileName
+    
+    final def htmlParser = new HtmlParser()
     /**
      * Creates and returns a Map of key/value pairs
      * 
@@ -20,12 +23,13 @@ class PageObjectWriter {
      */
     Map getSubstitutionBinding()
     {
-        def htmlParser = new HtmlParser()
         htmlParser.parse(htmlFilePath)
+        gebFileName = htmlParser.pageName
         [packageString: htmlParser.packageName,
                        htmlPageName: htmlParser.pageName,
                        url: htmlParser.url,
                        title: htmlParser.title,
+                       formAction: htmlParser.formAction,
                        inputFields: htmlParser.inputFieldsIterator,
                        submitButton: htmlParser.submitButtonIds ]
     }
@@ -40,16 +44,28 @@ class PageObjectWriter {
         engine.createTemplate(templateText.toString()).make(getSubstitutionBinding())
     }
     
-    void writeGebFile(path)
+    void writeGebFile()
     {
-        File file = new File(path).write(populateTemplate())
+        def populatedTemplate = populateTemplate()
+        makeGebDirectory()
+        def gebFilePath = "geb" + File.separator + gebFileName + ".groovy"
+        File file = new File(gebFilePath).write(populatedTemplate)
+    }
+    
+    private makeGebDirectory()
+    {
+        File gebDir = new File('geb')
+        if (!gebDir.exists())
+        {
+            gebDir.mkdir()
+        }
     }
     
     static boolean isArgsValid(args)
     {
-        if (args.size() != 2)
+        if (args.size() != 1)
         {
-            println "Usage: java -jar GebPageObjectGenerator-x.x.x.jar htmlFilePath outputPath"
+            println "Usage: java -jar GebPageObjectGenerator-x.x.x.jar htmlFilePath"
             return false
         }
         return true
@@ -60,7 +76,7 @@ class PageObjectWriter {
         if (args != null && PageObjectWriter.isArgsValid(args))
         {
             PageObjectWriter writer = new PageObjectWriter(htmlFilePath:args[0])
-            writer.writeGebFile(args[1])
+            writer.writeGebFile()
         }
     }
 }

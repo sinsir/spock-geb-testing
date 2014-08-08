@@ -39,7 +39,7 @@ class HtmlParserSpockTest extends Specification {
     def "input elements are returned succesfully, after parsing document"()
     {
         setup:
-            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
+            htmlParser.parse(TEST_HTML_FILE_LOCATION)
         when:
             def inputFieldsList = htmlParser.getInputFieldsIterator()
         then:
@@ -50,9 +50,9 @@ class HtmlParserSpockTest extends Specification {
     def "parser returns html document title, after parsing document"()
     {
         setup:
-            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
+            htmlParser.parse(TEST_HTML_FILE_LOCATION)
         when:
-            def title = htmlParser.getTitle()
+            def title = htmlParser.title
         then:
             title == HtmlContent.TITLE
     }
@@ -60,9 +60,9 @@ class HtmlParserSpockTest extends Specification {
     def "parser returns submit button id, after parsing document"()
     {
         setup:
-            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
+            htmlParser.parse(TEST_HTML_FILE_LOCATION)
         when:
-            def idList = htmlParser.getSubmitButtonIds()
+            def idList = htmlParser.submitButtonIds
         then:
             idList != null
             idList.size == 1
@@ -72,13 +72,22 @@ class HtmlParserSpockTest extends Specification {
     def "parser returns html document url, after parsing document"()
     {
         setup:
-            def doc = htmlParser.parse(TEST_HTML_FILE_LOCATION)
+           htmlParser.parse(TEST_HTML_FILE_LOCATION)
         when:
-            def url = htmlParser.getUrl()
-            println url
+            def url = htmlParser.url
         then:
             url != null
             url != ""
-            
+    }
+    
+    def "parser returns html form action element"()
+    {
+        setup:
+            htmlParser.parse(TEST_HTML_FILE_LOCATION)
+        when:
+            def formAction = htmlParser.formAction
+        then:
+            formAction != null 
+           // println "formAction" + formAction
     }
 }
