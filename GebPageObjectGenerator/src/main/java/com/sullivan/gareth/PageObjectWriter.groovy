@@ -24,7 +24,6 @@ class PageObjectWriter {
      */
     Map getSubstitutionBinding(String fileName)
     {
-        println 'getSubstitutionBinding fileName ' + fileName
         htmlParser.parse(fileName)
         gebFileName = htmlParser.pageName
         [packageString: htmlParser.packageName,
@@ -48,22 +47,20 @@ class PageObjectWriter {
         List populatedTemplateList = []
         if (isProcessingDir())
         {
-            println "processing a dir"
             def fileList = getFileNamesFromDirectory()
-            println "fileList " + fileList
-            //fileList.each { file-> println file.getAbsolutePath() }
-            fileList.each { file-> populatedTemplateList.add(engine.make(getSubstitutionBinding(file.getAbsolutePath()))) }
-            
-            
+            for (int i=0; i < fileList.size(); i ++)
+            {
+                def binding = getSubstitutionBinding(fileList[i].getAbsolutePath())
+                populatedTemplateList.add(new CompletedTemplate(fileName:gebFileName,gebString:engine.make(binding).toString()))
+            }
         }
         else
         {
-            populatedTemplateList[0] = engine.make(getSubstitutionBinding(htmlFilePath))
+            def binding = getSubstitutionBinding(htmlFilePath)
+            populatedTemplateList[0] = new CompletedTemplate(fileName:gebFileName,gebString:engine.make(binding).toString())
         }
         
-        println "populatedTemplateList " + populatedTemplateList
         return populatedTemplateList
-        //engine.createTemplate(templateText.toString()).make(getSubstitutionBinding())
     }
     
     private final class HtmlFileFilter implements FilenameFilter {
@@ -74,19 +71,20 @@ class PageObjectWriter {
     
     private def getFileNamesFromDirectory()
     {
-        
         new File(htmlFilePath).listFiles(new HtmlFileFilter())
-        
-        
-//        new File(htmlFilePath).list(new HtmlFileFilter())
     }
     
-    void writeGebFile()
+    void writeGebFiles()
     {
-        def populatedTemplate = populateTemplate()
+        List completedTemplates = populateTemplate()
         makeGebDirectory()
-        def gebFilePath = "geb" + File.separator + gebFileName + ".groovy"
-        populatedTemplate.each { template -> new File(gebFilePath).write(template.toString()) }
+       // def gebFilePath = 'geb' + File.separator + gebFileName + '.groovy'
+        for (int i = 0; i  < completedTemplates.size(); i ++)
+        {
+            File file = new File('geb' + File.separator + completedTemplates[i].fileName+'.groovy')
+            file.write(completedTemplates[i].gebString)
+        }
+        //completedTemplates.each { template -> new File(template.fileName).write(template.gebString) }
     }
     
     private makeGebDirectory()
@@ -113,12 +111,17 @@ class PageObjectWriter {
         return true
     }
     
+    private class CompletedTemplate
+    {
+        String fileName
+        String gebString
+    }
     static void main(String[] args)
     {
         if (args != null && PageObjectWriter.isArgsValid(args))
         {
             PageObjectWriter writer = new PageObjectWriter(htmlFilePath:args[0])
-            writer.writeGebFile()
+            writer.writeGebFiles()
         }
     }
 }

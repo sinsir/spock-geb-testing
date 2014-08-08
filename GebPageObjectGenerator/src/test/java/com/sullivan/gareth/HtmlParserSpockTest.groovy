@@ -88,6 +88,5 @@ class HtmlParserSpockTest extends Specification {
             def formAction = htmlParser.formAction
         then:
             formAction != null 
-           // println "formAction" + formAction
     }
 }
