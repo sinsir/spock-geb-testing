@@ -63,7 +63,6 @@ public class HtmlParserTest {
         assertNull(classToTest.parse(null));
         //This will test groovy implementation where jsoup parses directly from a file
         //Document doc = (Document) classToTest.parse(TEST_HTML_FILE_LOCATION);
-        //System.out.println("Doc "+doc);
     }
     
     @Test
