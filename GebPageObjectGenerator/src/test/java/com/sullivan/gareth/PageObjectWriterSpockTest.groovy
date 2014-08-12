@@ -22,7 +22,7 @@ class PageObjectWriterSpockTest extends Specification {
             bindings.keySet().asList() == 
                 ['packageString', 'htmlPageName', 'url', 'title', 'formAction', 'inputFields', 'submitButton']
             bindings.values().asList() == 
-                ['src.test.resources', 'Example', testFileLocation, 'Name And Age Submission Form', '#', ['myName', 'myAge'], ['mySubmitButton']]
+                ['src.test.resources', 'Example', testFileLocation, 'Name And Age Submission Form', '/', ['myName', 'myAge'], ['mySubmitButton']]
     }
     
     def "a single template is populated with values from binding"()

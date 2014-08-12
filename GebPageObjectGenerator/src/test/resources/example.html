@@ -3,17 +3,15 @@
         <title>Name And Age Submission Form</title>
     </head>
     <body>
-        <form action="#" th:action="@{/}" th:object="${person}" method="post" id="signupForm">
+        <form action="/" method="post" id="signupForm">
             <table>
                 <tr>
                     <td>Name:</td>
-                    <td><input type="text" th:field="*{name}" id="myName"/></td>
-                    <td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</td>
+                    <td><input type="text" id="myName" name="name" value="" /></td>
                 </tr>
                 <tr>
                     <td>Age:</td>
-                    <td><input type="text" th:field="*{age}" id="myAge"/></td>
-                    <td th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Name Error</td>
+                    <td><input type="text" id="myAge" name="age" value="" /></td>
                 </tr>
                 <tr>
                     <td><button type="submit" id="mySubmitButton">Submit</button></td>
