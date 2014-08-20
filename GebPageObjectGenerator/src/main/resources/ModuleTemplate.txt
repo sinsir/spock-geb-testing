@@ -1,0 +1,10 @@
+package $packageString
+
+import geb.page
+
+class $moduleName extends Module {
+        static content = {
+            cell { i ->  \$("td", i) }
+           <% for(i = 0; i< tableHeaders.size(); i++){println '\t' + tableHeaders[i] + ' { cell(' + i + ').text() }' } %>
+        }
+}

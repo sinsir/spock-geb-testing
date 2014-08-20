@@ -16,13 +16,16 @@ class PageObjectWriterSpockTest extends Specification {
     {
         when: 'we create a binding'
             def bindings = pow.getSubstitutionBinding(testFileLocation)
+            def expectedResults = ['src.test.resources', 'Example', testFileLocation, 'Name And Age Submission Form', '/', ['myName', 'myAge'], ['mySubmitButton'], ['bookResults']]
         then: 'check that it contains what we expect'
             bindings != null
-            bindings.size() == 7
+            bindings.size() == 8
+            
             bindings.keySet().asList() == 
-                ['packageString', 'htmlPageName', 'url', 'title', 'formAction', 'inputFields', 'submitButton']
-            bindings.values().asList() == 
-                ['src.test.resources', 'Example', testFileLocation, 'Name And Age Submission Form', '/', ['myName', 'myAge'], ['mySubmitButton']]
+                ['packageString', 'htmlPageName', 'url', 'title', 'formAction', 'inputFields', 'submitButton','tables']
+         
+            bindings.values().each {item -> expectedResults.contains(item)}
+                
     }
     
     def "a single template is populated with values from binding"()
@@ -91,7 +94,7 @@ class PageObjectWriterSpockTest extends Specification {
         then: 'check that 5 files have been written to disk and contain substituted values'
             File gebDir = new File('geb')
             gebDir.exists() && gebDir.isDirectory()
-            gebDir.listFiles().size() == 5
+            gebDir.listFiles().size() == 10 // there will be 5 PageObjects and 5 modules
             gebDir.listFiles().each { file -> file.name.startsWith('Test') && file.name.endsWith('.groovy') }
          cleanup: 'delete the 5 html file and their parent directory'
              gebDir.listFiles().each {t -> t.delete()}

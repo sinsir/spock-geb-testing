@@ -89,4 +89,14 @@ class HtmlParserSpockTest extends Specification {
         then:
             formAction != null 
     }
+    
+    def "parser returns html table id"(){
+        setup:
+            htmlParser.parse(TEST_HTML_FILE_LOCATION)
+        when:
+            def tableIds = htmlParser.tableIds
+        then:
+            tableIds != null && tableIds.size() > 0
+//            println tableIds
+    }
 }

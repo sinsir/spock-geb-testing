@@ -124,6 +124,26 @@ class HtmlParser {
             action.attr('action')
         }
     }
+    
+    /**
+     * Returns a list of the ids of all tables
+     * @return List of strings - ids of all table elements
+     */
+    List getTableIds()
+    {
+        if (doc != null) {
+            convertElementsToIdList(doc.select('body > table').toList())
+        }
+    }
+    
+    List getTableHeaders()
+    {
+        if (doc != null) {
+            def stringList = []
+            doc.select('body > table th').toList().each { stringList.add(it.text().minus(" ").toLowerCase()) }
+            stringList
+        }
+    }
    
     private List convertElementsToIdList(elementList) {
         def stringList = []

@@ -8,7 +8,7 @@ import groovy.text.SimpleTemplateEngine
  * 
  * @author GSULLIVA
  */
-class PageObjectWriter {
+class PageObjectWriter extends ObjectWriter{
     
     /** Page Object template text file */
     String templateText = new File(getClass().getResourceAsStream('/GebPageObjectTemplate.txt').text)
@@ -22,7 +22,7 @@ class PageObjectWriter {
     /** instance of the parser */
     final htmlParser = new HtmlParser()
     
-    private static final String GEB_DIR = 'geb'
+    
     
     /**
      * Creates and returns a Map of key/value pairs
@@ -41,7 +41,20 @@ class PageObjectWriter {
                        title: htmlParser.title,
                        formAction: htmlParser.formAction,
                        inputFields: htmlParser.inputFieldsIterator,
-                       submitButton: htmlParser.submitButtonIds ]
+                       submitButton: htmlParser.submitButtonIds,
+                       tables: htmlParser.tableIds ]
+    }
+    
+    def createModule()
+    {
+        def tableIds = htmlParser.tableIds
+        if (!tableIds?.empty)
+        {
+            for (int i=0; i < tableIds.size(); i ++){
+                def moduleWriter = new ModuleTemplateWriter(htmlParser:htmlParser, filePath:gebFileName)
+                moduleWriter.writeGebFiles()
+            }
+        }
     }
     
     /**
@@ -55,80 +68,26 @@ class PageObjectWriter {
     List populateTemplate() {
         def engine = new SimpleTemplateEngine().createTemplate(templateText)
         List populatedTemplateList = []
-        if (isProcessingDir()) {
-            def fileList = fileNamesFromDirectory
+        if (isProcessingDir(htmlFilePath)) {
+            def fileList = getFileNamesFromDirectory(htmlFilePath)
             for (int i=0; i < fileList.size(); i ++) {
+                
                 def binding = getSubstitutionBinding(fileList[i].absolutePath)
                 populatedTemplateList.add(
                     new CompletedTemplate(fileName:gebFileName, gebString:engine.make(binding).toString()))
+                createModule()
             }
         }
         else {
             def binding = getSubstitutionBinding(htmlFilePath)
             populatedTemplateList[0] = 
                 new CompletedTemplate(fileName:gebFileName, gebString:engine.make(binding).toString())
+                createModule()
         }
         
         populatedTemplateList
     }
     
-    /**
-     * Filename filter to search for *.htm or *.html files
-     * 
-     * @author GSULLIVA
-     *
-     */
-    private final class HtmlFileFilter implements FilenameFilter {
-        /**
-         * Returns true if filename has a .htm/.hmtl suffix, false otherwise
-         * 
-         * @return  true if filename has a .htm/.hmtl suffix, false otherwise
-         */
-        boolean accept(File f, String filename) {
-                 filename.toLowerCase().endsWith('.htm') || filename.toLowerCase().endsWith('.html')
-            }
-        }
-    
-    /**
-     * Returns an array of File objects representing htm/html files in the directory 
-     * specified when creating this object
-     * 
-     * @return array of html File objects
-     */
-    private getFileNamesFromDirectory() {
-        new File(htmlFilePath).listFiles(new HtmlFileFilter())
-    }
-    
-    /**
-     * Converts html file(s) to geb, and writes them to disk as .groovy files
-     */
-    void writeGebFiles() {
-        List completedTemplates = populateTemplate()
-        makeGebDirectory()
-        for (int i = 0; i  < completedTemplates.size(); i ++) {
-            File file = new File(GEB_DIR + File.separator + completedTemplates[i].fileName + '.groovy')
-            file.write(completedTemplates[i].gebString)
-        }
-    }
-    
-    /**
-     * If it doesn't already exist, creates a geb directory to store output groovy files
-     */
-    private void makeGebDirectory() {
-        File gebDir = new File(GEB_DIR)
-        if (!gebDir.exists()) {
-            gebDir.mkdir()
-        }
-    }
-    
-    /**
-     * Checks whether html path argument passed in on command line is a directory
-     * 
-     * @return true if directory, false otherwise
-     */
-    private boolean isProcessingDir() {
-        new File(htmlFilePath).isDirectory()
-    }
 
     /**
      * Check if expected number of command line arguments were passed in
@@ -144,17 +103,7 @@ class PageObjectWriter {
         true
     }
     
-    /**
-     * Bean class to store groovy output fileName and geb page object string for a html 
-     * file thats been converted to a geb groovy file
-     * 
-     * @author GSULLIVA
-     *
-     */
-    private class CompletedTemplate {
-        String fileName
-        String gebString
-    }
+    
     
     /**
      * Entry point into the code
